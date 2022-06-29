@@ -2,9 +2,11 @@ from hashlib import md5
 import random
 from string import ascii_letters
 from typing import Any, Iterator, Dict, List, cast
+from uuid import uuid4
+
 
 from .const import INT_MIN_VALUE, INT_MAX_VALUE, LONG_MIN_VALUE, LONG_MAX_VALUE
-from .schema import extract_record_type, parse_schema
+from .schema import extract_record_type, extract_logical_type, parse_schema
 from .types import Schema, NamedSchemas
 from ._schema_common import PRIMITIVES
 
@@ -25,6 +27,10 @@ def _gen_utf8() -> str:
 def gen_data(schema: Schema, named_schemas: NamedSchemas, index: int) -> Any:
 
     record_type = extract_record_type(schema)
+    logical_type = extract_logical_type(schema)
+
+    if logical_type == 'uuid':
+        return str(uuid4())
 
     if record_type == "null":
         return None
