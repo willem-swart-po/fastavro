@@ -2,9 +2,11 @@ from hashlib import md5
 import random
 from string import ascii_letters
 from typing import Any, Iterator, Dict, List, cast
+from uuid import uuid4
+
 
 from .const import INT_MIN_VALUE, INT_MAX_VALUE, LONG_MIN_VALUE, LONG_MAX_VALUE
-from .schema import extract_record_type, parse_schema
+from .schema import extract_record_type, extract_logical_type, parse_schema
 from .types import Schema, NamedSchemas
 from ._schema_common import PRIMITIVES
 import faker
