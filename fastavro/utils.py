@@ -10,7 +10,6 @@ from .schema import extract_record_type, extract_logical_type, parse_schema
 from .types import Schema, NamedSchemas
 from ._schema_common import PRIMITIVES
 
-
 def _randbytes(num: int) -> bytes:
     # TODO: Use random.randbytes when this library is Python 3.9+ only
     return random.getrandbits(num * 8).to_bytes(num, "little")
@@ -29,8 +28,20 @@ def gen_data(schema: Schema, named_schemas: NamedSchemas, index: int) -> Any:
     record_type = extract_record_type(schema)
     logical_type = extract_logical_type(schema)
 
-    if logical_type == 'uuid':
+
+   
+    if logical_type == "string-uuid":
         return str(uuid4())
+    elif logical_type == "string-decimal":
+        return random.random()
+    elif logical_type == "string-timestamp-millis":
+        return random.random()
+    # elif logical_type == "currency":
+    #     return random.random()
+    # elif logical_type == "frequency":
+    #     return random.random()
+    # elif logical_type == "interest-type":
+    #     return random.random()
 
     if record_type == "null":
         return None
@@ -39,7 +50,7 @@ def gen_data(schema: Schema, named_schemas: NamedSchemas, index: int) -> Any:
     elif record_type == "int":
         return random.randint(INT_MIN_VALUE, INT_MAX_VALUE)
     elif record_type == "long":
-        return random.randint(LONG_MIN_VALUE, LONG_MAX_VALUE)
+        return random.randint(LONG_MIN_VALUE, LONG_MAX_VALUE) 
     elif record_type == "float":
         return random.random()
     elif record_type == "double":
@@ -76,6 +87,14 @@ def gen_data(schema: Schema, named_schemas: NamedSchemas, index: int) -> Any:
             field["name"]: gen_data(field["type"], named_schemas, index)
             for field in record_schema["fields"]
         }
+
+    ## Added the below 2 from Hanno to deal with the dict and list
+    elif record_type == dict:
+        return gen_data(record_type ["type"])
+
+    elif record_type == list:
+        item = random.choice(record_type ["type"])
+        return gen_data(item)
     else:
         named_schema = cast(str, schema)
         return gen_data(named_schemas[named_schema], named_schemas, index)
